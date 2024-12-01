@@ -15,7 +15,7 @@ fn main() {
     left.sort();
     right.sort();
     
-    let result1: i32 = left.iter().zip(right.iter()).map(|(&a,&b)| (b as i32 - a as i32).abs()).sum();
+    let result1: u32 = left.iter().zip(right.iter()).map(|(&a,&b)| a.abs_diff(b)).sum();
     println!("{}", result1);
 
     /* day 2 */
