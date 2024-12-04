@@ -30,7 +30,7 @@ fn get_neighbour_dirs(
     ]
     .iter()
     .filter(|&(dx, dy)| valid_point(grid, x as isize + dx, y as isize + dy))
-    .cloned()
+    .copied()
     .collect()
 }
 
@@ -62,48 +62,42 @@ fn count_words_at(
         .sum()
 }
 fn is_mas_x(grid: &[Vec<char>], x: usize, y: usize) -> bool {
-    if (!(valid_point(grid, x as isize - 1, y as isize - 1)
-        && valid_point(grid, x as isize + 1, y as isize + 1)))
+    if grid[y][x] != 'A'
+        || !(valid_point(grid, x as isize - 1, y as isize - 1)
+            && valid_point(grid, x as isize + 1, y as isize + 1))
     {
-        return false;
-    } else if grid[y][x] != 'A' {
-        return false;
+        false
     } else {
-        return ((grid[y - 1][x - 1] == 'M' && grid[y + 1][x + 1] == 'S')
+        ((grid[y - 1][x - 1] == 'M' && grid[y + 1][x + 1] == 'S')
             || (grid[y - 1][x - 1] == 'S' && grid[y + 1][x + 1] == 'M'))
             && ((grid[y + 1][x - 1] == 'M' && grid[y - 1][x + 1] == 'S')
-                || (grid[y + 1][x - 1] == 'S' && grid[y - 1][x + 1] == 'M'));
+                || (grid[y + 1][x - 1] == 'S' && grid[y - 1][x + 1] == 'M'))
     }
 }
 
-fn compute(parsed: Vec<Vec<char>>) -> (usize, usize) {
+fn compute(parsed: &[Vec<char>]) -> (usize, usize) {
     let mut res1: usize = 0;
+    let mut res2: usize = 0;
     for y in 0..parsed.len() {
         for x in 0..parsed[y].len() {
             if parsed[y][x] == 'X' {
-                res1 += count_words_at(&parsed, x, y, "MAS", None);
+                res1 += count_words_at(parsed, x, y, "MAS", None);
+            }
+            if is_mas_x(&parsed, x, y) {
+                res2 += 1;
             }
         }
     }
-    (
-        res1,
-        (0..parsed.len())
-            .map(|y| {
-                (0..parsed[y].len())
-                    .filter(|x| is_mas_x(&parsed, *x, y))
-                    .count()
-            })
-            .sum(),
-    )
+    (res1, res2)
 }
 fn main() {
     let mut input = String::new();
 
     let _ = io::stdin().read_to_string(&mut input);
     use std::time::Instant;
+    let parsed: Vec<Vec<char>> = input.lines().map(|x| x.chars().collect()).collect();
     let now = Instant::now();
-
-    let (r1, r2) = compute(input.lines().map(|x| x.chars().collect()).collect());
+    let (r1, r2) = compute(&parsed);
     let elapsed = now.elapsed();
     println!("{} {}", r1, r2);
 
