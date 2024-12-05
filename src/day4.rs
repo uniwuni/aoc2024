@@ -111,7 +111,7 @@ mod tests {
     #[test]
     fn example() {
         // avoid parsing issues
-        let input = String::from(
+        let input: Vec<Vec<char>> = String::from(
             "....XXMAS.
 .SAMXMS...
 ...S..A...
@@ -127,7 +127,7 @@ S.S.S.S.SS
         .map(|x| x.chars().collect())
         .collect();
 
-        assert_eq!(compute(input).0, 18);
+        assert_eq!(compute(&input).0, 18);
     }
     #[test]
     fn example2() {
@@ -147,7 +147,7 @@ M.M.M.M.M.
         .lines()
         .map(|x| x.chars().collect())
         .collect();
-        assert_eq!(compute(input).1, 9);
+        assert_eq!(compute(&input).1, 9);
     }
 
     #[test]
@@ -157,6 +157,6 @@ M.M.M.M.M.
             .lines()
             .map(|x| x.chars().collect())
             .collect();
-        assert_eq!(compute(input).0, 4);
+        assert_eq!(compute(&input).0, 4);
     }
 }
