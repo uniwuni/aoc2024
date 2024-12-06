@@ -1,13 +1,17 @@
-use std::io::{self, Read};
 use std::collections::BTreeSet;
-fn walk(grid : &[Vec<char>], y: usize, x: usize) -> BTreeSet<(isize,isize)> {
+use std::io::{self, Read};
+fn walk(grid: &[Vec<char>], y: usize, x: usize) -> BTreeSet<(isize, isize)> {
     let mut y = y as isize;
     let mut x = x as isize;
-    let mut dir: (isize, isize) = (0,-1);
+    let mut dir: (isize, isize) = (0, -1);
     let mut visited: BTreeSet<(isize, isize)> = BTreeSet::new();
     while y < grid.len() as isize && x < grid[0].len() as isize && y > 0 && x > 0 {
-        visited.insert((x,y));
-        if grid.get((y+dir.1) as usize).and_then(|a| a.get((x+dir.0) as usize)) == Some(&'#') {
+        visited.insert((x, y));
+        while grid
+            .get((y + dir.1) as usize)
+            .and_then(|a| a.get((x + dir.0) as usize))
+            == Some(&'#')
+        {
             dir = (-dir.1, dir.0);
         }
         //println!("{}, {}", x, y);
@@ -17,21 +21,28 @@ fn walk(grid : &[Vec<char>], y: usize, x: usize) -> BTreeSet<(isize,isize)> {
     visited
 }
 
-fn is_obstruction(grid : &[Vec<char>], y: usize, x: usize, yo: isize, xo: isize) -> bool {
+fn is_obstruction(grid: &[Vec<char>], y: usize, x: usize, yo: isize, xo: isize) -> bool {
     let mut y = y as isize;
     let mut x = x as isize;
-    let mut dir: (isize, isize) = (0,-1);
-    let mut visited: BTreeSet<(isize, isize, isize, isize)> = BTreeSet::new();
+    let mut dir: (isize, isize) = (0, -1);
+    let mut visited: BTreeSet<(isize, isize)> = BTreeSet::new();
     while y < grid.len() as isize && x < grid[0].len() as isize && y > 0 && x > 0 {
-        if visited.contains(&(x,y,dir.0,dir.1)) {
-            return true
-        }
-        while ((y+dir.1) == yo && (x+dir.0) == xo) || grid.get((y+dir.1) as usize).and_then(|a| a.get((x+dir.0) as usize)) == Some(&'#') {
-            visited.insert((x,y, dir.0, dir.1));
+        while ((y + dir.1) == yo && (x + dir.0) == xo)
+            || grid
+                .get((y + dir.1) as usize)
+                .and_then(|a| a.get((x + dir.0) as usize))
+                == Some(&'#')
+        {
+            if dir == (0, -1) {
+                if visited.contains(&(x, y)) {
+                    return true;
+                }
+                visited.insert((x, y));
+            }
             dir = (-dir.1, dir.0);
         }
         //println!("{}, {}", x, y);
-        x += dir.0; 
+        x += dir.0;
         y += dir.1;
     }
     false
@@ -43,7 +54,7 @@ fn compute(parsed: &[Vec<char>]) -> (usize, usize) {
     let path = walk(parsed, y, x);
     let mut res2 = 0;
     let res1 = path.len();
-    for (xo,yo) in path {
+    for (xo, yo) in path {
         let yo = yo as usize;
         let xo = xo as usize;
         if is_obstruction(parsed, y, x, yo as isize, xo as isize) && (y != yo || x != xo) {
