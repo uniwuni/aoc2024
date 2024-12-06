@@ -1,10 +1,10 @@
 use std::io::{self, Read};
-use std::collections::HashSet;
-fn walk(grid : &[Vec<char>], y: usize, x: usize) -> HashSet<(isize,isize)> {
+use std::collections::BTreeSet;
+fn walk(grid : &[Vec<char>], y: usize, x: usize) -> BTreeSet<(isize,isize)> {
     let mut y = y as isize;
     let mut x = x as isize;
     let mut dir: (isize, isize) = (0,-1);
-    let mut visited: HashSet<(isize, isize)> = HashSet::new();
+    let mut visited: BTreeSet<(isize, isize)> = BTreeSet::new();
     while y < grid.len() as isize && x < grid[0].len() as isize && y > 0 && x > 0 {
         visited.insert((x,y));
         if grid.get((y+dir.1) as usize).and_then(|a| a.get((x+dir.0) as usize)) == Some(&'#') {
@@ -21,13 +21,13 @@ fn is_obstruction(grid : &[Vec<char>], y: usize, x: usize, yo: isize, xo: isize)
     let mut y = y as isize;
     let mut x = x as isize;
     let mut dir: (isize, isize) = (0,-1);
-    let mut visited: HashSet<(isize, isize, isize, isize)> = HashSet::new();
+    let mut visited: BTreeSet<(isize, isize, isize, isize)> = BTreeSet::new();
     while y < grid.len() as isize && x < grid[0].len() as isize && y > 0 && x > 0 {
         if visited.contains(&(x,y,dir.0,dir.1)) {
             return true
         }
-        visited.insert((x,y, dir.0, dir.1));
         while ((y+dir.1) == yo && (x+dir.0) == xo) || grid.get((y+dir.1) as usize).and_then(|a| a.get((x+dir.0) as usize)) == Some(&'#') {
+            visited.insert((x,y, dir.0, dir.1));
             dir = (-dir.1, dir.0);
         }
         //println!("{}, {}", x, y);
