@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+ilog = "1.0.1"
+itertools = "0.13.0"
 regex = "1.11.1"
 
 [[bin]]
@@ -29,3 +31,7 @@ path = "src/day5.rs"
 [[bin]]
 name = "day6"
 path = "src/day6.rs"
+
+[[bin]]
+name = "day7"
+path = "src/day7.rs"
