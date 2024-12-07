@@ -1,11 +1,8 @@
 use std::io::{self, BufRead};
 use itertools::Itertools;
-use ilog::IntLog;
 
 fn next_power_of_10(n : u64) -> u64 {
-    if n == 0 {
-        1
-    } else if n < 10 {
+     if n < 10 {
         10
     } else if n < 100 {
         100
@@ -25,8 +22,26 @@ fn next_power_of_10(n : u64) -> u64 {
         1000000000
     } else if n < 10000000000 {
         10000000000
+    } else if n < 100000000000 {
+        100000000000
+    } else if n < 1000000000000 {
+        1000000000000
+    } else if n < 10000000000000 {
+        10000000000000
+    } else if n < 100000000000000 {
+        100000000000000
+    } else if n < 1000000000000000 {
+        1000000000000000
+    } else if n < 10000000000000000 {
+        1000000
+    } else if n < 100000000000000000 {
+        100000000000000000
+    } else if n < 1000000000000000000 {
+        1000000000000000000
+    } else if n < 10000000000000000000 {
+        10000000000000000000
     } else {
-        (10 as u64).pow(n.log10() as u32 + 1)
+        std::u64::MAX
     }
 }
 
@@ -65,8 +80,7 @@ fn can_be_made2(target: u64, vals: &[u64]) -> bool {
                 res *= vals[n + 1];
             } else if arrangement[n] == 1 {
                 res += vals[n + 1];
-            } else if arrangement[n] == 2 {
-                //let len = vals[n+1].log10() + 1;
+            } else {
                 res *= next_power_of_10(vals[n+1]);
                 res += vals[n+1];
             }
