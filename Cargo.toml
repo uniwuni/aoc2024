@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 itertools = "0.13.0"
+multimap = "0.10.0"
 regex = "1.11.1"
 
 [[bin]]
@@ -34,3 +35,7 @@ path = "src/day6.rs"
 [[bin]]
 name = "day7"
 path = "src/day7.rs"
+
+[[bin]]
+name = "day8"
+path = "src/day8.rs"
