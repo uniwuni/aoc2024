@@ -25,7 +25,7 @@ fn defragment1(parsed: Vec<((usize, u32), &bool)>) -> Vec<((usize, u32), &bool)>
                     flag = false;
                     break;
                 }
-                
+
                 j += 1;
             } else {
                 parsed.insert(i + j, ((last.0 .0, parsed[i].0 .1), last.1));
@@ -39,7 +39,7 @@ fn defragment1(parsed: Vec<((usize, u32), &bool)>) -> Vec<((usize, u32), &bool)>
     }
     parsed
 }
-
+/*
 fn pprint(p: &[((usize, u32), &bool)]) {
     for i in p {
         if(! i.1) {
@@ -54,13 +54,12 @@ fn pprint(p: &[((usize, u32), &bool)]) {
     }
     println!();
 }
-
+*/
 fn defragment2(parsed: Vec<((usize, u32), &bool)>) -> Vec<((usize, u32), &bool)> {
     let mut parsed = parsed;
     let mut i = parsed.len() - 1;
-    let mut flag = true;
-    while flag {
-        if i == 0 || i == ((0-1) as usize) {
+    loop {
+        if i == 0 || i == ((0 - 1) as usize) {
             break;
         }
         if !*parsed[i].1 {
@@ -68,25 +67,24 @@ fn defragment2(parsed: Vec<((usize, u32), &bool)>) -> Vec<((usize, u32), &bool)>
             continue;
         }
         let ((id, size), _) = parsed[i];
-        match parsed.iter().position(|((id2,size2), full)| !**full && *size2 >= size) {
-            None => {i -= 1}
+        match parsed
+            .iter()
+            .take(i)
+            .position(|((_, size2), full)| !**full && *size2 >= size)
+        {
+            None => i -= 1,
             Some(p) => {
-                if p >= i {
-                    i -= 1;
-                    continue;
-                }
-                let ((_,size2), _) = parsed[p];
+                let ((_, size2), _) = parsed[p];
                 if size2 == size {
                     (parsed[p], parsed[i]) = (parsed[i], parsed[p]);
                     i -= 1;
                 } else {
-                    parsed[p].0.1 -= size;
-                    parsed[i] = ((id, size), &  false);
+                    parsed[p].0 .1 -= size;
+                    parsed[i] = ((id, size), &false);
                     parsed.insert(p, ((id, size), &true));
                 }
             }
         }
-        
     }
     parsed
 }
@@ -96,17 +94,20 @@ fn checksum(parsed: &[((usize, u32), &bool)]) -> usize {
     let mut res1 = 0;
     for ((a, b), c) in parsed {
         if **c {
-        res1 += j * a * *b as usize; 
-        res1 += (b * (b - 1)) as usize * a / 2;
+            res1 += j * a * *b as usize;
+            res1 += (b * (b - 1)) as usize * a / 2;
         }
         j += *b as usize;
     }
-    
+
     res1
 }
 
 fn compute(parsed: Vec<((usize, u32), &bool)>) -> (usize, usize) {
-    (checksum(&defragment1(parsed.clone())), checksum(&defragment2(parsed)))
+    (
+        checksum(&defragment1(parsed.clone())),
+        checksum(&defragment2(parsed)),
+    )
 }
 fn main() {
     let mut input = String::new();
@@ -118,10 +119,10 @@ fn main() {
     let (r1, r2) = compute(
         input
             .char_indices()
-            .filter_map(|(i, c)| c.to_digit(10).and_then(|c| Some((i/2, c))))
+            .filter_map(|(i, c)| c.to_digit(10).and_then(|c| Some((i / 2, c))))
             .zip([true, false].iter().cycle())
             .collect(),
-    );
+        );
     let elapsed = now.elapsed();
     println!("{} {}", r1, r2);
 
